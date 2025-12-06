@@ -10,7 +10,7 @@
 
 Claude Code is brilliant, but single-threaded. **Claude Code Splitter** transforms your terminal into a multi-agent command center.
 
-![Demo](/Users/austin/.gemini/antigravity/brain/14c4bcf5-4533-4bd6-9e4d-08299ae6b116/verify_layout_refinement_1765049853099.webp)
+
 
 ## Get Started
 
