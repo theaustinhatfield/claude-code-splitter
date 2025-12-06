@@ -650,8 +650,18 @@ fi
         }
 
         function copyCmd(elementId) {
-            fallbackCopy(text, elementId);
-        }
+            const text = document.getElementById(elementId).innerText;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showCopyFeedback(elementId);
+                }).catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    fallbackCopy(text, elementId);
+                });
+            } else {
+                fallbackCopy(text, elementId);
+            }
         }
 
         function fallbackCopy(text, elementId) {
