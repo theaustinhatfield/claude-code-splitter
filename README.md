@@ -8,7 +8,10 @@
  |____/ \__\__,_|_|        \__|_| |_|_|___/  |_|  \___| .__/ \___/ 
                                                       |_|          
 ```
+```
 > If you're enjoying this, please star this repo!
+
+![Demo Video](Demovideo.mov)
 
 ## Like 4x Coding Velocity.
 
