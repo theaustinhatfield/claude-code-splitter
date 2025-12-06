@@ -23,9 +23,15 @@ Claude Code is brilliant, but single-threaded. **Claude Code Splitter** transfor
 curl -fsSL https://claude.ai/install.sh | bash
 ```
 
-**Step 2: Launch the Grid**
+**Step 2: Connect Account**
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/launch.sh?v=2)
+claude
+```
+*(Follow the prompts to login)*
+
+**Step 3: Launch the Grid**
+```bash
+bash <(curl -s https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/launch.sh?v=3)
 ```
 
 ## Overview
