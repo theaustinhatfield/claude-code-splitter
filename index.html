@@ -620,7 +620,8 @@ fi
             const data1 = getAgentData(1);
             shellCmds.push(`tmux select-pane -t 0 -T "${data1.name}"`);
             shellCmds.push(`tmux send-keys -t 0 '${escapeHost(getPaneCmd(data1))}'`);
-            shellCmds.push(`tmux send-keys -t 0 Enter`);
+            shellCmds.push(`sleep 0.1`);
+            shellCmds.push(`tmux send-keys -t 0 C-m`);
 
             if (count > 1) {
                 const cols = Math.min(count, 3);
@@ -631,7 +632,8 @@ fi
                     shellCmds.push(`tmux split-window -h`);
                     shellCmds.push(`tmux select-pane -T "${data.name}"`);
                     shellCmds.push(`tmux send-keys '${escapeHost(getPaneCmd(data))}'`);
-                    shellCmds.push(`tmux send-keys Enter`);
+                    shellCmds.push(`sleep 0.1`);
+                    shellCmds.push(`tmux send-keys C-m`);
                 }
 
                 // Create rows
@@ -640,7 +642,8 @@ fi
                     shellCmds.push(`tmux split-window -v`);
                     shellCmds.push(`tmux select-pane -T "${data.name}"`);
                     shellCmds.push(`tmux send-keys '${escapeHost(getPaneCmd(data))}'`);
-                    shellCmds.push(`tmux send-keys Enter`);
+                    shellCmds.push(`sleep 0.1`);
+                    shellCmds.push(`tmux send-keys C-m`);
                 }
 
                 shellCmds.push(`tmux select-layout tiled`);
