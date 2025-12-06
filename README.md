@@ -1,5 +1,23 @@
 # Claude Code Splitter
 
+```
+        *
+       /|\
+      / | \
+     /  |  \
+    *---+---*
+     \  |  /
+      \ | /
+       \|/
+        *
+```
+
+<p align="center">
+  <a href="https://github.com/theaustinhatfield/claude-code-splitter">
+    <img src="https://img.shields.io/github/stars/theaustinhatfield/claude-code-splitter?style=for-the-badge&logo=github&label=Star%20This%20Repo" alt="Star this repo">
+  </a>
+</p>
+
 **Run 4 Claude Code agents in parallel.**
 
 ```
