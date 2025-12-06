@@ -3,13 +3,12 @@
 # Check for Claude Code
 if ! command -v claude &> /dev/null; then
     echo "Claude Code not found. Installing..."
-    echo "Claude Code not found. Installing..."
     curl -fsSL https://claude.ai/install.sh | bash
 fi
 
 # Verify installation
 if ! command -v claude &> /dev/null; then
-    echo "Error: Failed to install Claude Code. Please install manually: npm i -g @anthropic-ai/claude-code"
+    echo "Error: Failed to install Claude Code. Please install manually: curl -fsSL https://claude.ai/install.sh | bash"
     exit 1
 fi
 
