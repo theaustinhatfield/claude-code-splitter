@@ -48,10 +48,10 @@
 **Claude Code Splitter** is a **terminal multiplexer** configuration that transforms your CLI into a **multi-agent AI command center**.
 
 It splits your terminal into four independent, parallel **Claude Code sessions**. You can:
-- 🚀 **Refactor** frontend components in Agent-1
-- 🧪 **Write unit tests** in Agent-2
-- 💾 **Optimize database queries** in Agent-3
-- 📝 **Generate documentation** in Agent-4
+- **Refactor** frontend components in Agent-1
+- **Write unit tests** in Agent-2
+- **Optimize database queries** in Agent-3
+- **Generate documentation** in Agent-4
 
 The result: **4x throughput**. Same human, same **Anthropic API** key, four times the coding velocity. It's the ultimate **productivity hack** for developers using the **Claude CLI**.
 
