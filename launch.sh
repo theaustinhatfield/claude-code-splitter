@@ -19,40 +19,39 @@ fi
 
 echo "Claude Code is ready."
 
-# Test script to verify tmux logic for 7 agents
 
-SESSION="test_agents"
-tmux kill-session -t $SESSION 2>/dev/null
-sleep 0.5
+# Configuration
+SESSION="claude_grid"
+AGENT_COUNT=4
+
+# Check if session exists
+if tmux has-session -t $SESSION 2>/dev/null; then
+    echo "Session $SESSION already exists. Attaching..."
+    tmux attach -t $SESSION
+    exit 0
+fi
+
+# Create new session
 tmux new-session -d -s $SESSION
+
+# Set options
+tmux set -g mouse on
 tmux set -g pane-border-status top
 tmux set -g pane-border-format " #T "
 
-# Agent 1
-tmux send-keys 'echo "Agent 1 ready"' C-m; tmux select-pane -T "Agent-1"
+# Create agents
+# Agent 1 is already created with the session
+tmux select-pane -t 0 -T "Agent-1"
+tmux send-keys -t 0 'claude' C-m
 
-# Logic for 7 agents (max 3 cols)
-# Cols = 3
-# Create columns
-tmux split-window -h
-tmux send-keys 'echo "Agent 2 ready"' C-m; tmux select-pane -T "Agent-2"
-tmux split-window -h
-tmux send-keys 'echo "Agent 3 ready"' C-m; tmux select-pane -T "Agent-3"
+# Create remaining agents
+for i in $(seq 2 $AGENT_COUNT); do
+    tmux split-window -t $SESSION
+    tmux select-layout tiled
+    tmux select-pane -T "Agent-$i"
+    tmux send-keys "claude" C-m
+done
 
-# Go back to layout tiled?
+# Final layout adjustment
 tmux select-layout tiled
-
-# Create remaining 4 agents
-tmux split-window -v
-tmux send-keys 'echo "Agent 4 ready"' C-m; tmux select-pane -T "Agent-4"
-tmux split-window -v
-tmux send-keys 'echo "Agent 5 ready"' C-m; tmux select-pane -T "Agent-5"
-tmux split-window -v
-tmux send-keys 'echo "Agent 6 ready"' C-m; tmux select-pane -T "Agent-6"
-tmux split-window -v
-tmux send-keys 'echo "Agent 7 ready"' C-m; tmux select-pane -T "Agent-7"
-
-tmux select-layout tiled
-
-# List panes to verify
-tmux list-panes -t $SESSION -F "#{pane_index}: #{pane_title}"
+tmux attach -t $SESSION
