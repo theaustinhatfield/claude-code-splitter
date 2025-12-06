@@ -217,6 +217,14 @@ tmux kill-server
 
 ---
 
+## Support
+
+If this saves you time, star the repo. It takes 2 seconds and helps others find it.
+
+[![Star this repo](https://img.shields.io/github/stars/theaustinhatfield/claude-code-splitter?style=social)](https://github.com/theaustinhatfield/claude-code-splitter)
+
+---
+
 ## License
 
 MIT
@@ -226,3 +234,4 @@ MIT
 ## Contributing
 
 Issues and pull requests welcome.
+
