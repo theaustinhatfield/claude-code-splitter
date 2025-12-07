@@ -20,7 +20,7 @@
 
 ### Run 4 Claude Code agents in parallel.
 
-[![Claude Code Splitter Demo](http://img.youtube.com/vi/dFKNzzcct5o/0.jpg)](http://www.youtube.com/watch?v=dFKNzzcct5o)
+[![Claude Code Splitter Demo](http://img.youtube.com/vi/Q9MZSnoSVlI/0.jpg)](http://www.youtube.com/watch?v=Q9MZSnoSVlI)
 
 ```
 +---------------------------+---------------------------+
