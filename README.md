@@ -19,8 +19,6 @@ If you find this useful, please [star the repo](https://github.com/theaustinhatf
               Click any pane to select
 ```
 
-[![Claude Code Splitter Demo](http://img.youtube.com/vi/Q9MZSnoSVlI/0.jpg)](http://www.youtube.com/watch?v=Q9MZSnoSVlI)
-
 ---
 
 ## Why?
