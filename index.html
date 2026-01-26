@@ -212,9 +212,9 @@
     <div class="container">
         <header class="header">
             <div class="badge">Open Source Tool</div>
-            <div class="logo">🔀</div>
+            <div class="logo">>_</div>
             <h1>Claude Code Splitter</h1>
-            <p class="tagline">Run 4 Claude Code agents in parallel. Copy, paste, code faster.</p>
+            <p class="tagline">Run infinite Claude Code agents in parallel. Faster than humanly possible.</p>
         </header>
 
         <div style="text-align: center; margin: 40px 0;">
@@ -223,10 +223,10 @@
 
         <div class="grid-diagram">
             <div class="grid-box">
-                <div class="agent">Agent 1</div>
-                <div class="agent">Agent 2</div>
-                <div class="agent">Agent 3</div>
-                <div class="agent">Agent 4</div>
+                <div class="agent">claude1</div>
+                <div class="agent">claude2</div>
+                <div class="agent">claude3</div>
+                <div class="agent">claudeN</div>
             </div>
         </div>
 
@@ -234,43 +234,52 @@
             <div class="step">
                 <div class="step-header">
                     <div class="step-number">1</div>
-                    <h2 class="step-title">Install & Login</h2>
+                    <h2 class="step-title">Install Claude Code</h2>
                 </div>
-                <p class="step-desc">One-time setup. Install Claude Code and complete login.</p>
+                <p class="step-desc">Official installation. Copy and paste to get started.</p>
                 <div class="code-block">
                     <span class="copy-hint">Copy & paste</span>
-                    <code>npm i -g @anthropic-ai/claude-code && claude</code>
+                    <code>curl -fsSL https://claude.ai/install.sh | bash</code>
                 </div>
             </div>
 
             <div class="step">
                 <div class="step-header">
                     <div class="step-number">2</div>
-                    <h2 class="step-title">Launch 4 Agents</h2>
+                    <h2 class="step-title">Enable Infinity Mode</h2>
                 </div>
-                <p class="step-desc">Paste this anytime to spawn your 2×2 agent grid.</p>
+                <p class="step-desc">Paste the correct one-liner for your shell to enable dynamic spawning.</p>
                 <div class="code-block small">
-                    <span class="copy-hint">Copy & paste</span>
-                    <code>cat > /tmp/s.sh << 'EOF'
-tmux kill-session -t agents 2>/dev/null; sleep 0.5
-tmux new-session -d -s agents
-tmux set -g mouse on
-tmux set -g pane-border-status top
-tmux set -g pane-border-format " #T "
-tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-1"
-tmux split-window -h; tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-2"
-tmux split-window -v; tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-3"
-tmux select-pane -t 0; tmux split-window -v; tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-4"
-tmux attach -t agents
-EOF
-bash /tmp/s.sh</code>
+                    <span class="copy-hint">For Bash</span>
+                    <code>echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handle() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "bash: $1: command not found"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.bashrc && source ~/.bashrc</code>
                 </div>
+                <div class="code-block small" style="margin-top: 12px;">
+                    <span class="copy-hint">For Zsh</span>
+                    <code>echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handler() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "zsh: command not found: $1"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.zshrc && source ~/.zshrc</code>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2 class="step-title">Launch Your Swarm</h2>
+                </div>
+                <p class="step-desc">Go to <strong>any codebase</strong> on your machine and run the command. Work on 4, 16, or 50 things at once.</p>
+                <div class="code-block">
+                    <span class="copy-hint">Try this anytime</span>
+                    <code>cd /your/project<br>$ claude4</code>
+                </div>
+                <ul style="margin: 20px 0 0 76px; color: var(--gray-600); font-size: 15px;">
+                    <li><strong>Universal:</strong> Works in any directory or Git repository</li>
+                    <li><strong>Infinite Spawning:</strong> Call any command like <code>claude12</code></li>
+                    <li><strong>Dynamic Layouts:</strong> Panes auto-tile for perfect visibility</li>
+                    <li><strong>Persistent:</strong> Agents keep running even if you disconnect</li>
+                </ul>
             </div>
         </section>
 
         <footer class="footer">
-            <p class="footer-text">Click any pane to select. Ctrl+B then D to detach.</p>
-            <a href="https://github.com/theaustinhatfield/claude-code-splitter" class="cta">View on GitHub →</a>
+            <p class="footer-text">Move panes with mouse or Ctrl+B + Arrows. Zoom with Ctrl+B + Z.</p>
+            <a href="https://github.com/theaustinhatfield/claude-code-splitter" class="cta">View on GitHub</a>
         </footer>
     </div>
 </body>

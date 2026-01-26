@@ -1,26 +1,6 @@
 # Claude Code Splitter
 
-```
-.-------------------------------------------------------------------------------.
-| *   .   (◕‿◕)   .   *   (✯◡✯)   .   *   (ಠ_ಠ)   .   *   (>_<)   .   *   (UwU) |
-|   .   *       .   *   .       *   .   *       .   *   .       *   .   *       |
-| *   .    P L E A S E   S T A R   T H I S   R E P O    .   *   . |
-|   *   .       *   .   *       .   *   .       *   .   *       .   *   .       |
-| .   *   (O_O)   .   *   (♥_♥)   .   *   (^_^)   .   *   (¬_¬)   .   *   (T_T) |
-'-------------------------------------------------------------------------------'
-```
-
-<p align="center">
-  <a href="https://github.com/theaustinhatfield/claude-code-splitter">
-    <img src="https://img.shields.io/github/stars/theaustinhatfield/claude-code-splitter?style=for-the-badge&logo=github&label=Star%20This%20Repo" alt="Star this repo">
-  </a>
-</p>
-
-## Claude Code Splitter
-
-### Run 4 Claude Code agents in parallel.
-
-[![Claude Code Splitter Demo](http://img.youtube.com/vi/Q9MZSnoSVlI/0.jpg)](http://www.youtube.com/watch?v=Q9MZSnoSVlI)
+If you find this useful, please [star the repo](https://github.com/theaustinhatfield/claude-code-splitter) on GitHub.
 
 ```
 +---------------------------+---------------------------+
@@ -39,87 +19,74 @@
               Click any pane to select
 ```
 
+[![Claude Code Splitter Demo](http://img.youtube.com/vi/Q9MZSnoSVlI/0.jpg)](http://www.youtube.com/watch?v=Q9MZSnoSVlI)
+
 ---
 
-## The Problem
+## Why?
 
-**Claude Code** by **Anthropic** is an incredible **AI coding assistant**, but it has a limitation: it's single-threaded. You talk to one agent at a time. For a **10x developer** working on complex architectures, this serial workflow becomes a bottleneck. You're waiting for one task to finish before you can start the next.
+**Claude Code** is single-threaded. Waiting for one task to finish before starting the next is a bottleneck. **Claude Code Splitter** fixes this by spawning parallel agents in one terminal.
 
-## The Solution
-
-**Claude Code Splitter** is a **terminal multiplexer** configuration that transforms your CLI into a **multi-agent AI command center**.
-
-It splits your terminal into four independent, parallel **Claude Code sessions**. You can:
-- **Refactor** frontend components in Agent-1
-- **Write unit tests** in Agent-2
-- **Optimize database queries** in Agent-3
-- **Generate documentation** in Agent-4
-
-The result: **4x throughput**. Same human, same **Anthropic API** key, four times the coding velocity. It's the ultimate **productivity hack** for developers using the **Claude CLI**.
+- **Parallel Workflows:** Refactor, test, and document simultaneously.
+- **Infinity Mode:** Spawn 4, 16, or 100+ agents with one command.
+- **Max Velocity:** Same API key, 4x+ throughput.
 
 ---
 
 ## Quick Start
 
-### Step 1: Prepare Environment
-
-1. **Install Claude Code:**
-   ```bash
-   npm i -g @anthropic-ai/claude-code
-   ```
-
-2. **Verify everything works:**
-   ```bash
-   claude --version && tmux -V
-   ```
-   *You should see version numbers for both. If `tmux` is missing, install it.*
-
-3. **Login:**
-   Run `claude`, complete the login flow, then press `Ctrl+C` to exit.
-
-### Step 2: Launch Four Agents
-
+### Step 1: Install Claude Code
+Install the official Anthropic CLI if you haven't already.
 ```bash
-cat > /tmp/s.sh << 'EOF'
-tmux kill-session -t agents 2>/dev/null; sleep 0.5
-tmux new-session -d -s agents
-tmux set -g mouse on
-tmux set -g pane-border-status top
-tmux set -g pane-border-format " #T "
-tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-1"
-tmux split-window -h; tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-2"
-tmux split-window -v; tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-3"
-tmux select-pane -t 0; tmux split-window -v; tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-4"
-tmux attach -t agents
-EOF
-bash /tmp/s.sh
+curl -fsSL https://claude.ai/install.sh | bash
 ```
 
-That's it. Four agents, ready to work.
+### Step 2: Enable Infinity Mode
+Paste the one-liner for your shell. This injects the `claude4` command logic into your profile and ensures `tmux` is installed.
+
+**Bash:**
+```bash
+echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handle() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "bash: $1: command not found"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.bashrc && source ~/.bashrc
+```
+
+**Zsh:**
+```bash
+echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handler() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "zsh: command not found: $1"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.zshrc && source ~/.zshrc
+```
+
+### Step 3: Launch Your Swarm
+Navigate to **any codebase** and run the command.
+```bash
+cd /your/project
+claude4
+```
+
+
+---
+
+## Infinity mode
+
+Once installed, you can spawn any number of agents instantly.
+
+```bash
+$ claude4    # Spawns 4 agents
+$ claude16   # Spawns 16 agents
+$ claude100  # Spawns 100 agents (if your CPU can handle it!)
+```
+
+### Navigation Cheat-Sheet
+- **Select Agent:** Click any pane or use `Ctrl+B, Arrows`
+- **Zoom/Maximize:** `Ctrl+B, Z` (same to un-zoom)
+- **Resize:** Drag pane borders with your mouse
+- **Close Agent:** Type `exit` or `Ctrl+D`
+- **Detach Swarm:** `Ctrl+B, D` (keeps agents running in background)
+
 
 ---
 
 ## How It Works
 
-The script uses tmux to create a 2x2 grid of terminal panes. Each pane runs an independent Claude Code session. They share your authentication but otherwise operate independently.
-
-```
-+----------------------------------------------------------------+
-|                         Your Terminal                           |
-|  +------------------------------------------------------------+ |
-|  |                        tmux                                | |
-|  |  +-----------+  +-----------+  +-----------+  +-----------+| |
-|  |  | Claude    |  | Claude    |  | Claude    |  | Claude    || |
-|  |  | Code CLI  |  | Code CLI  |  | Code CLI  |  | Code CLI  || |
-|  |  +-----+-----+  +-----+-----+  +-----+-----+  +-----+-----+| |
-|  +--------|--------------|--------------|--------------+------+ |
-+-----------|--------------|--------------|--------------|--------+
-            |              |              |              |
-            v              v              v              v
-      +-----------------------------------------------------+
-      |               Anthropic API (Cloud)                 |
-      +-----------------------------------------------------+
-```
+The script uses `tmux` to create a tiled grid of terminal panes. Each pane runs an independent `claude` process. They share your authentication but operate independently.
 
 | Component | Purpose |
 |-----------|---------|
@@ -135,56 +102,19 @@ The script uses tmux to create a 2x2 grid of terminal panes. Each pane runs an i
 |--------|------|
 | Select pane | Click with mouse |
 | Navigate | `Ctrl+B` then arrow keys |
-| Fullscreen | `Ctrl+B` then `z` |
+| Fullscreen | `Ctrl+B` then `Z` |
 | Detach | `Ctrl+B` then `D` |
-| Reattach | `tmux attach -t agents` |
-| Kill all | `tmux kill-session -t agents` |
-
----
-
-## Advanced: Customizing Agent Count
-
-The default script creates 4 agents in a 2x2 grid. You can modify the script to add more agents by adding more `tmux split-window` commands.
-
-**To add a 5th agent:**
-Add this line before the final `tmux attach` command in the script:
-
-```bash
-tmux split-window -v; tmux send-keys 'claude' C-m; tmux select-pane -T "Agent-5"
-```
-
-**Understanding the commands:**
-- `tmux split-window -h`: Splits the current pane horizontally (side-by-side).
-- `tmux split-window -v`: Splits the current pane vertically (top-bottom).
-- `tmux select-pane -t 0`: Selects the first pane (useful for balancing the grid).
-
-*Note: As you add more agents, screen real estate decreases. 4 agents is the sweet spot for most 1080p/1440p monitors.*
+| Reattach | `tmux attach -t claude-swarm` |
+| Kill all | `tmux kill-session -t claude-swarm` |
 
 ---
 
 ## Use Cases
 
-**Parallel development:**
-```
-Agent-1: "Fix the authentication bug in login.py"
-Agent-2: "Add unit tests for the user model"
-Agent-3: "Refactor the database queries"
-Agent-4: "Update the API documentation"
-```
-
-**Research and implementation:**
-```
-Agent-1: "Research caching best practices"
-Agent-2: [implementing based on Agent-1's findings]
-```
-
-**Multi-repository:**
-```
-Agent-1: Working in /frontend
-Agent-2: Working in /backend
-Agent-3: Working in /mobile
-Agent-4: Working in /infrastructure
-```
+- **Frontend/Backend:** Parallel debugging of both sides of the stack.
+- **TDD:** One agent writing tests, another implementing features.
+- **Documentation:** Generate docs side-by-side with code changes.
+- **Research:** One agent researching docs while others code.
 
 ---
 
@@ -194,21 +124,21 @@ Agent-4: Working in /infrastructure
 
 Yes. Claude Code calls the Anthropic API. The intelligence lives in the cloud.
 
-**Can all four agents work at once?**
+**Can all agents work at once?**
 
-Yes. They're independent processes. Four conversations running simultaneously.
+Yes. They're independent processes. Multiple conversations running simultaneously.
 
-**Do I need four API keys?**
+**Do I need multiple API keys?**
 
-No. One login, four agents.
+No. One login, infinite agents (bounded by your hardware).
 
 **Can I use more than four?**
 
-Yes, but screen space becomes the limiting factor. Four fits well on most displays.
+Yes! That's the power of Infinity Mode. Type `claude8`, `claude16`, etc. Just keep in mind your screen real estate and CPU.
 
 **Platform support?**
 
-Works on Mac, Linux, and Windows (via WSL). You need tmux installed.
+Works on Mac, Linux, and Windows (via WSL). You need `tmux` installed.
 
 ---
 
@@ -216,66 +146,30 @@ Works on Mac, Linux, and Windows (via WSL). You need tmux installed.
 
 **"tmux: command not found"**
 
-Install it:
+The installer should handle this, but you can install it manually:
 ```bash
-# Mac
+# Mac (Homebrew)
 brew install tmux
 
 # Ubuntu/Debian
 sudo apt-get install tmux
-
-# Fedora
-sudo dnf install tmux
 ```
 
-**"duplicate session: agents"**
+**"duplicate session: claude-swarm"**
 
 The session already exists:
 ```bash
-tmux attach -t agents
+tmux attach -t claude-swarm
 # or
-tmux kill-session -t agents
+tmux kill-session -t claude-swarm
 ```
 
 **"claude: command not found"**
 
-Run Step 1 again:
+Run Step 1 again to install the official CLI:
 ```bash
-npm i -g @anthropic-ai/claude-code && claude
+curl -fsSL https://claude.ai/install.sh | bash
 ```
-
-**"server exited unexpectedly"**
-
-Just run the script again:
-```bash
-bash /tmp/s.sh
-```
-
----
-
-## Quick Reference
-
-```bash
-# Install (once)
-npm i -g @anthropic-ai/claude-code && claude
-
-# Launch
-bash /tmp/s.sh
-
-# Reattach
-tmux attach -t agents
-
-# Kill
-tmux kill-server
-```
-
----
-
-## Support
-
-If this saves you time, star the repo. It takes 2 seconds and helps others find it.
-
-[![Star this repo](https://img.shields.io/github/stars/theaustinhatfield/claude-code-splitter?style=social)](https://github.com/theaustinhatfield/claude-code-splitter)
 
 ---
 
