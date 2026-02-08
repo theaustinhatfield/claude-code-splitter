@@ -5,15 +5,15 @@ If you find this useful, please [star the repo](https://github.com/theaustinhatf
 ```
 +---------------------------+---------------------------+
 |                           |                           |
-|         Agent-1           |         Agent-2           |
+|         Claude2           |         Aider2            |
 |                           |                           |
-|   "Fix the login bug"     |   "Add unit tests"        |
+|   "Building features"     |   "Fixing bugs"           |
 |                           |                           |
 +---------------------------+---------------------------+
 |                           |                           |
-|         Agent-3           |         Agent-4           |
+|         OpenCode2         |         Qwen2             |
 |                           |                           |
-|   "Refactor database"     |   "Update docs"           |
+|   "Writing tests"         |   "Updating docs"         |
 |                           |                           |
 +---------------------------+---------------------------+
               Click any pane to select
@@ -23,40 +23,49 @@ If you find this useful, please [star the repo](https://github.com/theaustinhatf
 
 ## Why?
 
-**Claude Code** is single-threaded. Waiting for one task to finish before starting the next is a bottleneck. **Claude Code Splitter** fixes this by spawning parallel agents in one terminal.
+Most AI coding agents are single-threaded. Waiting for one task to finish before starting the next is a bottleneck. **Claude Code Splitter** fixes this by spawning parallel agents in one terminal, and it's compatible with every major AI CLI.
 
-- **Parallel Workflows:** Refactor, test, and document simultaneously.
+- **Multi-CLI Support:** Compatible with Claude Code, Aider, OpenCode, GitHub CLI (`gh`), Qwen Code, Gemini CLI, and OpenAI Codex.
+- **Mixed Swarms:** Run `claude2 gh2` to spawn both simultaneously in a single tiled layout.
 - **Infinity Mode:** Spawn 4, 16, or 100+ agents with one command.
-- **Max Velocity:** Same API key, 4x+ throughput.
+- **Max Velocity:** Parallelize your workflow across your favorite AI models.
 
 ---
 
 ## Quick Start
 
-### Step 1: Install Claude Code
-Install the official Anthropic CLI if you haven't already.
+### One Command Install
+Copy, paste, done. This installs the **Claude Code Splitter** and launches your first swarm.
+
 ```bash
-curl -fsSL https://claude.ai/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/install.sh | bash
 ```
 
-### Step 2: Enable Infinity Mode
-Paste the one-liner for your shell. This injects the `claude4` command logic into your profile and ensures `tmux` is installed.
+That's it. The installer:
+1. Installs `tmux` (if needed)
+2. Installs the official Claude CLI (if needed)
+3. Configures your shell
+4. Launches a 4-agent Claude swarm immediately
 
-**Bash:**
-```bash
-echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handle() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "bash: $1: command not found"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.bashrc && source ~/.bashrc
-```
+### Supported Agents
+Other agents are supported but require manual installation. Once installed, the commands below will work automatically.
 
-**Zsh:**
-```bash
-echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handler() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "zsh: command not found: $1"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.zshrc && source ~/.zshrc
-```
+| Agent | Command | Description |
+|-------|---------|-------------|
+| Claude | `claude4` | Anthropic's Claude Code CLI |
+| Aider | `aider4` | AI pair programming with any model |
+| Gemini | `gemini4` | Google's Gemini CLI |
+| GitHub | `gh4` | GitHub CLI (Copilot, issues, PRs) |
+| Qwen | `qwen4` | Alibaba's Qwen CLI |
+| Codex | `codex4` | OpenAI Codex CLI |
+| OpenCode | `opencode4` | Open source coding assistant |
 
-### Step 3: Launch Your Swarm
-Navigate to **any codebase** and run the command.
+### Mix and Match
 ```bash
-cd /your/project
-claude4
+claude4          # 4 Claude agents
+claude2 aider2   # 2 Claude + 2 Aider agents
+aider2 gh2       # 2 Aider + 2 GitHub CLI
+gemini8          # 8 Gemini agents
 ```
 
 
@@ -104,6 +113,7 @@ The script uses `tmux` to create a tiled grid of terminal panes. Each pane runs 
 | Detach | `Ctrl+B` then `D` |
 | Reattach | `tmux attach -t claude-swarm` |
 | Kill all | `tmux kill-session -t claude-swarm` |
+| Set todo title | `todo "fix tests"` |
 
 ---
 
@@ -164,10 +174,17 @@ tmux kill-session -t claude-swarm
 
 **"claude: command not found"**
 
-Run Step 1 again to install the official CLI:
-```bash
-curl -fsSL https://claude.ai/install.sh | bash
-```
+1. Run Step 1 again to install the official CLI.
+2. The Claude Code Splitter installer automatically tries to manage your PATH, but if agents still aren't found, try running `export PATH="$PATH:$HOME/.local/bin"` or restarting your terminal.
+3. If you are using a mixed swarm (e.g., `qwen2`), ensure the `qwen` CLI is installed and available.
+
+**Security & Protection**
+
+Claude Code Splitter uses an internal whitelist to ensure only authorized AI CLI tools are executed. It also includes recursion protection to prevent accidental nested swarms from exhausting system resources.
+
+**Logging & Debugging**
+
+All activities are logged to `~/.claude-code-splitter.log`. If you encounter an issue, please include the contents of this log file when opening a [GitHub Issue](https://github.com/theaustinhatfield/claude-code-splitter/issues).
 
 ---
 
@@ -177,8 +194,10 @@ MIT
 
 ---
 
-## Contributing
+## About
 
-Issues and pull requests welcome.
+Created and maintained by [@theaustinhatfield](https://github.com/theaustinhatfield).
+
+This is a personal project. Bug reports welcome via [Issues](https://github.com/theaustinhatfield/claude-code-splitter/issues).
 
 

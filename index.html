@@ -211,10 +211,10 @@
 <body>
     <div class="container">
         <header class="header">
-            <div class="badge">Open Source Tool</div>
+            <div class="badge">Open Source • High Velocity • Secure</div>
             <div class="logo">>_</div>
             <h1>Claude Code Splitter</h1>
-            <p class="tagline">Run infinite Claude Code agents in parallel. Faster than humanly possible.</p>
+            <p class="tagline">Orchestrate parallel swarms for Claude, Aider, Qwen, Gemini, OpenCode, Codex, and GitHub CLI.</p>
         </header>
 
         <div style="text-align: center; margin: 40px 0;">
@@ -223,10 +223,10 @@
 
         <div class="grid-diagram">
             <div class="grid-box">
-                <div class="agent">claude1</div>
                 <div class="agent">claude2</div>
-                <div class="agent">claude3</div>
-                <div class="agent">claudeN</div>
+                <div class="agent">gh2</div>
+                <div class="agent">aider2</div>
+                <div class="agent">qwen2</div>
             </div>
         </div>
 
@@ -234,12 +234,20 @@
             <div class="step">
                 <div class="step-header">
                     <div class="step-number">1</div>
-                    <h2 class="step-title">Install Claude Code</h2>
+                    <h2 class="step-title">Install Your AI CLIs</h2>
                 </div>
-                <p class="step-desc">Official installation. Copy and paste to get started.</p>
-                <div class="code-block">
-                    <span class="copy-hint">Copy & paste</span>
+                <p class="step-desc">Claude Code Splitter is a universal orchestrator. Install your preferred agents first.</p>
+                <div class="code-block" style="font-size: 13px;">
+                    <span class="copy-hint">Claude</span>
                     <code>curl -fsSL https://claude.ai/install.sh | bash</code>
+                </div>
+                <div class="code-block" style="font-size: 13px; margin-top: 8px;">
+                    <span class="copy-hint">Aider</span>
+                    <code>pip install aider-chat</code>
+                </div>
+                <div class="code-block" style="font-size: 13px; margin-top: 8px;">
+                    <span class="copy-hint">GitHub CLI</span>
+                    <code>brew install gh</code>
                 </div>
             </div>
 
@@ -248,14 +256,10 @@
                     <div class="step-number">2</div>
                     <h2 class="step-title">Enable Infinity Mode</h2>
                 </div>
-                <p class="step-desc">Paste the correct one-liner for your shell to enable dynamic spawning.</p>
-                <div class="code-block small">
-                    <span class="copy-hint">For Bash</span>
-                    <code>echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handle() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "bash: $1: command not found"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.bashrc && source ~/.bashrc</code>
-                </div>
-                <div class="code-block small" style="margin-top: 12px;">
-                    <span class="copy-hint">For Zsh</span>
-                    <code>echo 'claude_split() { if ! command -v tmux &>/dev/null; then echo "Installing tmux..."; if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt-get update -y || true; sudo apt-get install -y tmux; elif [[ "$OSTYPE" == "darwin"* ]]; then brew install tmux; fi; fi; if ! command -v tmux &>/dev/null; then echo "tmux installation failed. Please install it manually."; return 1; fi; local s="claude-swarm"; tmux kill-session -t $s 2>/dev/null; tmux new-session -d -s $s; tmux set -g mouse on; tmux set -g pane-border-status top; tmux set -g pane-border-format " #[fg=white,bg=blue,bold] #T #[default] "; local f=1; for a in "$@"; do if [[ $a =~ ^(claude)([0-9]*)$ ]]; then local m="claude"; local c=$(echo $a | sed -E "s/(claude)([0-9]*)/\2/"); c=${c:-1}; if [ "$c" -gt 20 ]; then echo -n "Large swarm ($c). Continue? (y/n) "; read -n 1 -r REPLY; echo; if [[ ! $REPLY =~ ^[Yy]$ ]]; then return; fi; fi; for ((i=1; i<=c; i++)); do if [ $f -eq 1 ]; then tmux send-keys -t $s "$m" C-m; tmux select-pane -t $s -T "$m"; f=0; else tmux split-window -t $s; tmux send-keys -t $s "$m" C-m; tmux select-pane -T "$m"; tmux select-layout -t $s tiled; fi; done; fi; done; tmux attach -t $s; }; command_not_found_handler() { if [[ $1 =~ ^(claude)([0-9]+)$ ]]; then claude_split "$@"; else echo "zsh: command not found: $1"; return 127; fi; }; for i in {1..20}; do alias claude$i="claude_split claude$i"; done; echo -e "\nClaude Code Splitter Installed!\nType \033[1;34mclaude4\033[0m, \033[1;34mclaude8\033[0m, or \033[1;34mclaudeX\033[0m (any number) to begin your swarm.\n"' >> ~/.zshrc && source ~/.zshrc</code>
+                <p class="step-desc">Deploy the orchestration logic. This adds a modular script and secures your environment with a tool whitelist.</p>
+                <div class="code-block" style="font-size: 13px;">
+                    <span class="copy-hint">One-Line Setup</span>
+                    <code>curl -sSL https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/install.sh | bash</code>
                 </div>
             </div>
             <div class="step">
@@ -263,22 +267,26 @@
                     <div class="step-number">3</div>
                     <h2 class="step-title">Launch Your Swarm</h2>
                 </div>
-                <p class="step-desc">Go to <strong>any codebase</strong> on your machine and run the command. Work on 4, 16, or 50 things at once.</p>
-                <div class="code-block">
-                    <span class="copy-hint">Try this anytime</span>
-                    <code>cd /your/project<br>$ claude4</code>
+                <p class="step-desc">Navigate to any codebase and run your swarm command. Mix and match any supported agents.</p>
+                <div class="code-block" style="font-size: 13px;">
+                    <span class="copy-hint">Infinity Command</span>
+                    <code>$ claude4</code>
+                </div>
+                <div class="code-block" style="font-size: 13px; margin-top: 8px;">
+                    <span class="copy-hint">Mixed Swarm</span>
+                    <code>$ claude2 aider2 gh1</code>
                 </div>
                 <ul style="margin: 20px 0 0 76px; color: var(--gray-600); font-size: 15px;">
-                    <li><strong>Universal:</strong> Works in any directory or Git repository</li>
-                    <li><strong>Infinite Spawning:</strong> Call any command like <code>claude12</code></li>
-                    <li><strong>Dynamic Layouts:</strong> Panes auto-tile for perfect visibility</li>
-                    <li><strong>Persistent:</strong> Agents keep running even if you disconnect</li>
+                    <li><strong>Recursion Protection:</strong> Smart detection prevents accidental nested swarms.</li>
+                    <li><strong>Cybersecurity Hygiene:</strong> Strict tool whitelists verify every command.</li>
+                    <li><strong>Infinite Spawning:</strong> Call any count like <code>claude12</code> (Safety gate at 20+).</li>
+                    <li><strong>Diagnostics:</strong> Robust logging to <code>~/.claude-code-splitter.log</code>.</li>
                 </ul>
             </div>
         </section>
 
         <footer class="footer">
-            <p class="footer-text">Move panes with mouse or Ctrl+B + Arrows. Zoom with Ctrl+B + Z.</p>
+            <p class="footer-text">Move panes with mouse or Ctrl+B + Arrows. Drag borders to resize. Zoom with Ctrl+B + Z. Set a per-agent title with <code>todo "fix tests"</code>.</p>
             <a href="https://github.com/theaustinhatfield/claude-code-splitter" class="cta">View on GitHub</a>
         </footer>
     </div>
