@@ -64,12 +64,23 @@ else
     if [ "$OS" = "mac" ]; then
         brew install tmux 2>/dev/null && echo "      ✓ Installed" || echo "      ⚠ Install manually: brew install tmux"
     else
-        sudo apt-get update -qq 2>/dev/null || true
-        if sudo apt-get install -y tmux &>/dev/null; then
+        APT_DEFAULT_SOURCES=0
+        if ! sudo apt-get update -qq 2>/dev/null; then
+            # Retry using only the default sources.list to bypass broken third-party repos.
+            APT_DEFAULT_SOURCES=1
+            sudo apt-get -o Dir::Etc::sourceparts="-" -o Dir::Etc::sourcelist="/etc/apt/sources.list" update -qq 2>/dev/null || true
+        fi
+        if [ "$APT_DEFAULT_SOURCES" -eq 1 ]; then
+            sudo apt-get -o Dir::Etc::sourceparts="-" -o Dir::Etc::sourcelist="/etc/apt/sources.list" install -y tmux &>/dev/null
+        else
+            sudo apt-get install -y tmux &>/dev/null
+        fi
+        if command -v tmux &>/dev/null; then
             echo "      ✓ Installed"
         else
             echo "      ⚠ Install failed. If apt has a bad repo (e.g., yarn), fix it and retry."
             echo "        Then run: sudo apt-get update && sudo apt-get install -y tmux"
+            echo "        Hint: check /etc/apt/sources.list.d for broken repos."
         fi
     fi
 fi
