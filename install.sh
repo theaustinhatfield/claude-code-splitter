@@ -4,7 +4,7 @@
 #  CLAUDE CODE SPLITTER - ONE-CLICK INSTALLER
 #  https://github.com/theaustinhatfield/claude-code-splitter
 #  
-#  Installs: tmux, Claude CLI, Gemini CLI, Aider, GitHub CLI
+#  Installs: tmux, Claude CLI, OpenCode CLI
 #  Then launches your first swarm automatically!
 # ============================================================
 
@@ -37,7 +37,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # ============================================================
 # STEP 1: TMUX
 # ============================================================
-echo "[1/6] tmux (terminal multiplexer)..."
+echo "[1/7] tmux (terminal multiplexer)..."
 if command -v tmux &>/dev/null; then
     echo "      ✓ Already installed"
 else
@@ -51,7 +51,7 @@ fi
 # ============================================================
 # STEP 2: CLAUDE CLI (Anthropic)
 # ============================================================
-echo "[2/6] Claude Code (Anthropic)..."
+echo "[2/7] Claude Code (Anthropic)..."
 if command -v claude &>/dev/null || [ -f "$HOME/.local/bin/claude" ]; then
     echo "      ✓ Already installed"
 else
@@ -61,15 +61,41 @@ else
 fi
 
 # ============================================================
-# STEP 3-5: Optional Agents
+# STEP 3: OPENCODE CLI (Anomaly)
 # ============================================================
-echo "[3/6] Skipping optional agents (Gemini, Aider, gh, OpenCode, Qwen, Codex)..."
-echo "      (Install them manually to use 'gemini4', 'opencode2', etc.)"
+echo "[3/7] OpenCode (Anomaly)..."
+if command -v opencode &>/dev/null || [ -f "$HOME/.local/bin/opencode" ]; then
+    echo "      ✓ Already installed"
+else
+    curl -fsSL https://opencode.ai/install -o /tmp/opencode-install.sh 2>/dev/null
+    if bash /tmp/opencode-install.sh &>/dev/null; then
+        echo "      ✓ Installed"
+    else
+        if command -v npm &>/dev/null; then
+            npm install -g opencode-ai &>/dev/null && echo "      ✓ Installed (npm)"
+        elif command -v pnpm &>/dev/null; then
+            pnpm install -g opencode-ai &>/dev/null && echo "      ✓ Installed (pnpm)"
+        elif command -v yarn &>/dev/null; then
+            yarn global add opencode-ai &>/dev/null && echo "      ✓ Installed (yarn)"
+        elif command -v bun &>/dev/null; then
+            bun install -g opencode-ai &>/dev/null && echo "      ✓ Installed (bun)"
+        else
+            echo "      ⚠ Install manually: curl -fsSL https://opencode.ai/install | bash"
+        fi
+    fi
+    rm -f /tmp/opencode-install.sh
+fi
+
+# ============================================================
+# STEP 4-6: Optional Agents
+# ============================================================
+echo "[4/7] Skipping optional agents (Gemini, Aider, gh, Qwen, Codex)..."
+echo "      (Install them manually to use 'gemini4', 'aider2', etc.)"
 
 # ============================================================
 # STEP 6: SPLITTER LOGIC
 # ============================================================
-echo "[6/6] Configuring splitter..."
+echo "[7/7] Configuring splitter..."
 
 cat << 'SPLITTER_LOGIC' > "$LOGIC_FILE"
 #!/bin/bash
