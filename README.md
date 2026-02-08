@@ -1,5 +1,14 @@
 # Claude Code Splitter
 
+One command to launch parallel AI agents in a tiled terminal.
+Install once, then spawn swarms like `claude4` or `opencode4` from any repo.
+
+:clipboard: Copy/paste this in your terminal:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/install.sh | bash
+```
+
 If you find this useful, please [star the repo](https://github.com/theaustinhatfield/claude-code-splitter) on GitHub.
 
 ```

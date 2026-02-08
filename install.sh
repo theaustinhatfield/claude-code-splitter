@@ -9,6 +9,26 @@
 # ============================================================
 
 clear
+printf "\033c" 2>/dev/null || true
+
+roman_intro() {
+    printf "\n"
+    printf "        ____   ____   ____   ____   ____\n"
+    printf "       / __ \ / __ \ / __ \ / __ \ / __ \\\n"
+    printf "      / /_/ // / / // / / // / / // /_/ /\n"
+    printf "     / _, _// /_/ // /_/ // /_/ // _, _/\n"
+    printf "    /_/ |_| \____/ \____/ \____//_/ |_|\n"
+    printf "\n"
+    printf "      ROMA INVICTA - LEGION OF AGENTS\n\n"
+}
+
+roman_intro
+
+printf "  [forging the legion] "
+for s in "-" "\\" "|" "/" "-"; do
+    printf "\r  [forging the legion] %s" "$s"
+done
+printf "\r  [forging the legion] done\n\n"
 echo ""
 echo "  ╔═══════════════════════════════════════════════════════╗"
 echo "  ║                                                       ║"
@@ -44,7 +64,13 @@ else
     if [ "$OS" = "mac" ]; then
         brew install tmux 2>/dev/null && echo "      ✓ Installed" || echo "      ⚠ Install manually: brew install tmux"
     else
-        sudo apt-get update -qq && sudo apt-get install -y tmux &>/dev/null && echo "      ✓ Installed" || echo "      ⚠ Install manually: sudo apt install tmux"
+        sudo apt-get update -qq 2>/dev/null || true
+        if sudo apt-get install -y tmux &>/dev/null; then
+            echo "      ✓ Installed"
+        else
+            echo "      ⚠ Install failed. If apt has a bad repo (e.g., yarn), fix it and retry."
+            echo "        Then run: sudo apt-get update && sudo apt-get install -y tmux"
+        fi
     fi
 fi
 
@@ -249,7 +275,12 @@ if [ "$READY_COUNT" -gt 0 ]; then
     echo "Launching ${FIRST_TOOL}4 swarm in 3 seconds..."
     echo "(Press Ctrl+C to cancel)"
     sleep 3
-    claude_split "${FIRST_TOOL}4"
+    if command -v tmux &>/dev/null; then
+        claude_split "${FIRST_TOOL}4"
+    else
+        echo "tmux is not installed yet. Install tmux, then run:"
+        echo "  claude4"
+    fi
 else
     echo "No agents installed yet. After installing one, run:"
     echo "  source ~/.bashrc"
