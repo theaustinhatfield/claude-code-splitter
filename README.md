@@ -1,212 +1,369 @@
-# Claude Code Splitter
+```
+   ╔═══════════════════════════════════════════════════════════════╗
+   ║                                                               ║
+   ║    ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗           ║
+   ║   ██╔════╝██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝           ║
+   ║   ██║     ██║     ███████║██║   ██║██║  ██║█████╗             ║
+   ║   ██║     ██║     ██╔══██║██║   ██║██║  ██║██╔══╝             ║
+   ║   ╚██████╗███████╗██║  ██║╚██████╔╝██████╔╝███████╗           ║
+   ║    ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝           ║
+   ║                                                               ║
+   ║             C O D E   S P L I T T E R                         ║
+   ║         One Command. Infinite Agents.                         ║
+   ║                                                               ║
+   ╚═══════════════════════════════════════════════════════════════╝
+```
 
 One command to launch parallel AI agents in a tiled terminal.
 Install once, then spawn swarms like `claude4` or `opencode4` from any repo.
 
-:clipboard: Copy/paste this in your terminal:
-
-```bash
-curl -sSL https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/install.sh | bash
-```
-
 If you find this useful, please [star the repo](https://github.com/theaustinhatfield/claude-code-splitter) on GitHub.
 
 ```
-+---------------------------+---------------------------+
-|                           |                           |
-|         Claude2           |         Aider2            |
-|                           |                           |
-|   "Building features"     |   "Fixing bugs"           |
-|                           |                           |
-+---------------------------+---------------------------+
-|                           |                           |
-|         OpenCode2         |         Qwen2             |
-|                           |                           |
-|   "Writing tests"         |   "Updating docs"         |
-|                           |                           |
-+---------------------------+---------------------------+
-              Click any pane to select
+  ┌─────────────────────────────────────────────────────────────┐
+  │                                                             │
+  │    $ curl -sSL https://raw.githubusercontent.com/           │
+  │      theaustinhatfield/claude-code-splitter/                │
+  │      main/install.sh | bash                                 │
+  │                                                             │
+  └─────────────────────────────────────────────────────────────┘
 ```
-
----
-
-## Why?
-
-Most AI coding agents are single-threaded. Waiting for one task to finish before starting the next is a bottleneck. **Claude Code Splitter** fixes this by spawning parallel agents in one terminal, and it's compatible with every major AI CLI.
-
-- **Multi-CLI Support:** Compatible with Claude Code, Aider, OpenCode, GitHub CLI (`gh`), Qwen Code, Gemini CLI, and OpenAI Codex.
-- **Mixed Swarms:** Run `claude2 gh2` to spawn both simultaneously in a single tiled layout.
-- **Infinity Mode:** Spawn 4, 16, or 100+ agents with one command.
-- **Max Velocity:** Parallelize your workflow across your favorite AI models.
-
----
-
-## Quick Start
-
-### One Command Install
-Copy, paste, done. This installs the **Claude Code Splitter** and launches your first swarm.
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/install.sh | bash
 ```
 
-That's it. The installer:
-1. Installs `tmux` (if needed)
-2. Installs the official Claude CLI (if needed)
-3. Configures your shell
-4. Launches a 4-agent Claude swarm immediately
+```
+  ┌──────────── claude ────────────┬──────────── aider ─────────────┐
+  │                                │                                │
+  │  > Building the auth module    │  > Fixing the login bug        │
+  │    ...                         │    ...                         │
+  │                                │                                │
+  ├────────── opencode ────────────┼──────────── qwen ──────────────┤
+  │                                │                                │
+  │  > Writing unit tests          │  > Updating the docs           │
+  │    ...                         │    ...                         │
+  │                                │                                │
+  └────────────────────────────────┴────────────────────────────────┘
+                      Click any pane  ·  Drag to resize
+```
 
-### Supported Agents
-Other agents are supported but require manual installation. Once installed, the commands below will work automatically.
+---
 
-| Agent | Command | Description |
-|-------|---------|-------------|
-| Claude | `claude4` | Anthropic's Claude Code CLI |
-| Aider | `aider4` | AI pair programming with any model |
-| Gemini | `gemini4` | Google's Gemini CLI |
-| GitHub | `gh4` | GitHub CLI (Copilot, issues, PRs) |
-| Qwen | `qwen4` | Alibaba's Qwen CLI |
-| Codex | `codex4` | OpenAI Codex CLI |
-| OpenCode | `opencode4` | Open source coding assistant |
+```
+  ╦ ╦╦ ╦╦ ╦ ╔═╗
+  ║║║╠═╣╚╦╝ ╠═╝
+  ╚╩╝╩ ╩ ╩  ╩
+```
+
+Most AI coding agents are single-threaded. Waiting for one task to finish before starting the next is a bottleneck. **Claude Code Splitter** fixes this by spawning parallel agents in one terminal, and it's compatible with every major AI CLI.
+
+```
+  ┌─ Multi-CLI ──────── Compatible with Claude, Aider, OpenCode,
+  │                      GitHub CLI, Qwen, Gemini, and Codex.
+  │
+  ├─ Mixed Swarms ───── Run claude2 gh2 to spawn both in one layout.
+  │
+  ├─ Infinity Mode ──── Spawn 4, 16, or 100+ agents with one command.
+  │
+  └─ Max Velocity ───── Parallelize across your favorite AI models.
+```
+
+---
+
+```
+  ╔═╗ ╦ ╦ ╦ ╔═╗ ╦╔═  ╔═╗ ╔╦╗ ╔═╗ ╦═╗ ╔╦╗
+  ║═╬╗║ ║ ║ ║   ╠╩╗  ╚═╗  ║  ╠═╣ ╠╦╝  ║
+  ╚═╝╚╚═╝ ╩ ╚═╝ ╩ ╩  ╚═╝  ╩  ╩ ╩ ╩╚═  ╩
+```
+
+Copy, paste, done:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/theaustinhatfield/claude-code-splitter/main/install.sh | bash
+```
+
+```
+  ┌──────────────────────────────────────────────┐
+  │  The installer:                              │
+  │                                              │
+  │    [1]  Installs tmux (if needed)            │
+  │    [2]  Checks for compatible AI CLIs        │
+  │    [3]  Configures your shell                │
+  │                                              │
+  │  That's it. No third-party CLIs installed.   │
+  │  You bring the agents, we bring the grid.    │
+  └──────────────────────────────────────────────┘
+```
+
+---
+
+```
+  ╦ ╔╗╔ ╔═╗ ╔╦╗ ╔═╗ ╦  ╦    ╦ ╦ ╔═╗ ╦ ╦ ╦═╗
+  ║ ║║║ ╚═╗  ║  ╠═╣ ║  ║    ╚╦╝ ║ ║ ║ ║ ╠╦╝
+  ╩ ╝╚╝ ╚═╝  ╩  ╩ ╩ ╩═╝╩═╝   ╩  ╚═╝ ╚═╝ ╩╚═
+       A G E N T S
+```
+
+The splitter is agent-agnostic — install whichever CLIs you want to use.
+Copy/paste the official install command for each:
+
+```
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                                                                 │
+  │  CLAUDE CODE                                                    │
+  │  curl -fsSL https://claude.ai/install.sh | bash                │
+  │                                                                 │
+  │  Alt: brew install --cask claude-code                           │
+  │  Docs: https://docs.anthropic.com/en/docs/claude-code          │
+  │                                                                 │
+  ├─────────────────────────────────────────────────────────────────┤
+  │                                                                 │
+  │  OPENCODE                                                       │
+  │  curl -fsSL https://opencode.ai/install | bash                 │
+  │                                                                 │
+  │  Alt: npm install -g opencode-ai                                │
+  │       brew install anomalyco/tap/opencode                       │
+  │  Docs: https://opencode.ai                                     │
+  │                                                                 │
+  ├─────────────────────────────────────────────────────────────────┤
+  │                                                                 │
+  │  AIDER                                                          │
+  │  pip install aider-chat                                         │
+  │                                                                 │
+  │  Docs: https://aider.chat                                      │
+  │                                                                 │
+  ├─────────────────────────────────────────────────────────────────┤
+  │                                                                 │
+  │  GEMINI CLI                                                     │
+  │  npm install -g @google/gemini-cli                              │
+  │                                                                 │
+  │  Docs: https://github.com/google-gemini/gemini-cli             │
+  │                                                                 │
+  ├─────────────────────────────────────────────────────────────────┤
+  │                                                                 │
+  │  QWEN CODE                                                      │
+  │  npm install -g @qwen-code/qwen-code@latest                    │
+  │                                                                 │
+  │  Alt: brew install qwen-code                                    │
+  │  Docs: https://qwen-code.github.io                             │
+  │                                                                 │
+  ├─────────────────────────────────────────────────────────────────┤
+  │                                                                 │
+  │  OPENAI CODEX                                                   │
+  │  npm install -g @openai/codex                                   │
+  │                                                                 │
+  │  Alt: brew install codex                                        │
+  │  Docs: https://github.com/openai/codex                         │
+  │                                                                 │
+  ├─────────────────────────────────────────────────────────────────┤
+  │                                                                 │
+  │  GITHUB CLI                                                     │
+  │  brew install gh                                                │
+  │                                                                 │
+  │  Alt: sudo apt install gh                                       │
+  │  Docs: https://cli.github.com                                  │
+  │                                                                 │
+  └─────────────────────────────────────────────────────────────────┘
+```
+
+Once any agent is installed, the swarm commands work automatically.
+
+---
+
+```
+  ╔═╗ ╦ ╦ ╔═╗ ╔═╗ ╔═╗ ╦═╗ ╔╦╗ ╔═╗ ╔╦╗
+  ╚═╗ ║ ║ ╠═╝ ╠═╝ ║ ║ ╠╦╝  ║  ║╣   ║║
+  ╚═╝ ╚═╝ ╩   ╩   ╚═╝ ╩╚═  ╩  ╚═╝ ═╩╝
+       A G E N T S
+```
+
+```
+  ┌────────────┬────────────────┬──────────────────────────────────┐
+  │  Agent     │  Command       │  Description                     │
+  ├────────────┼────────────────┼──────────────────────────────────┤
+  │  Claude    │  claude4       │  Anthropic's Claude Code CLI     │
+  │  Aider     │  aider4        │  AI pair programming, any model  │
+  │  Gemini    │  gemini4       │  Google's Gemini CLI             │
+  │  GitHub    │  gh4           │  GitHub CLI (Copilot, PRs)       │
+  │  Qwen      │  qwen4         │  Alibaba's Qwen CLI             │
+  │  Codex     │  codex4        │  OpenAI Codex CLI                │
+  │  OpenCode  │  opencode4     │  Open source coding assistant    │
+  └────────────┴────────────────┴──────────────────────────────────┘
+```
 
 ### Mix and Match
+
 ```bash
 claude4          # 4 Claude agents
 claude2 aider2   # 2 Claude + 2 Aider agents
 aider2 gh2       # 2 Aider + 2 GitHub CLI
 gemini8          # 8 Gemini agents
+opencode2 qwen2  # 2 OpenCode + 2 Qwen
 ```
 
-
 ---
 
-## Infinity mode
-
-Once installed, you can spawn any number of agents instantly.
-
-```bash
-$ claude4    # Spawns 4 agents
-$ claude16   # Spawns 16 agents
-$ claude100  # Spawns 100 agents (if your CPU can handle it!)
+```
+  ╦ ╔╗╔ ╔═╗ ╦ ╔╗╔ ╦ ╔╦╗ ╦ ╦
+  ║ ║║║ ╠╣  ║ ║║║ ║  ║  ╚╦╝
+  ╩ ╝╚╝ ╩   ╩ ╝╚╝ ╩  ╩   ╩
+       M O D E
 ```
 
-### Navigation Cheat-Sheet
-- **Select Agent:** Click any pane or use `Ctrl+B, Arrows`
-- **Zoom/Maximize:** `Ctrl+B, Z` (same to un-zoom)
-- **Resize:** Drag pane borders with your mouse
-- **Close Agent:** Type `exit` or `Ctrl+D`
-- **Detach Swarm:** `Ctrl+B, D` (keeps agents running in background)
+Spawn any number of agents instantly:
 
-
----
-
-## How It Works
-
-The script uses `tmux` to create a tiled grid of terminal panes. Each pane runs an independent `claude` process. They share your authentication but operate independently.
-
-| Component | Purpose |
-|-----------|---------|
-| tmux | Terminal multiplexer. Creates the grid. |
-| Claude Code | Anthropic's coding assistant CLI. |
-| Anthropic API | The AI backend. Runs in the cloud. |
+```
+  ┌──────────────────────────────────────────────┐
+  │                                              │
+  │  $ claude4     →  4 agents in a 2x2 grid    │
+  │  $ claude16    →  16 agents, tiled           │
+  │  $ claude100   →  100 agents (good luck!)    │
+  │                                              │
+  └──────────────────────────────────────────────┘
+```
 
 ---
 
-## Controls
+```
+  ╔╗╔ ╔═╗ ╦  ╦ ╦ ╔═╗ ╔═╗ ╔╦╗ ╦ ╔═╗ ╔╗╔
+  ║║║ ╠═╣ ╚╗╔╝ ║ ║ ╦ ╠═╣  ║  ║ ║ ║ ║║║
+  ╝╚╝ ╩ ╩  ╚╝  ╩ ╚═╝ ╩ ╩  ╩  ╩ ╚═╝ ╝╚╝
+```
 
-| Action | Keys |
-|--------|------|
-| Select pane | Click with mouse |
-| Navigate | `Ctrl+B` then arrow keys |
-| Fullscreen | `Ctrl+B` then `Z` |
-| Detach | `Ctrl+B` then `D` |
-| Reattach | `tmux attach -t claude-swarm` |
-| Kill all | `tmux kill-session -t claude-swarm` |
-| Set todo title | `todo "fix tests"` |
+```
+  ┌───────────────────┬────────────────────────────────────────┐
+  │  Action           │  Keys                                  │
+  ├───────────────────┼────────────────────────────────────────┤
+  │  Select pane      │  Click with mouse                      │
+  │  Navigate         │  Ctrl+B then arrow keys                │
+  │  Fullscreen       │  Ctrl+B then Z                         │
+  │  Resize           │  Drag pane borders                     │
+  │  Detach           │  Ctrl+B then D                         │
+  │  Close pane       │  Type exit or Ctrl+D                   │
+  │  Reattach         │  tmux attach -t claude-swarm           │
+  │  Kill all         │  tmux kill-session -t claude-swarm     │
+  │  Set todo title   │  todo "fix tests"                      │
+  └───────────────────┴────────────────────────────────────────┘
+```
 
 ---
 
-## Use Cases
+```
+  ╦ ╦ ╔═╗ ╦ ╦   ╦ ╔╦╗   ╦ ╦ ╔═╗ ╦═╗ ╦╔═ ╔═╗
+  ╠═╣ ║ ║ ║║║   ║  ║    ║║║ ║ ║ ╠╦╝ ╠╩╗ ╚═╗
+  ╩ ╩ ╚═╝ ╚╩╝   ╩  ╩    ╚╩╝ ╚═╝ ╩╚═ ╩ ╩ ╚═╝
+```
 
-- **Frontend/Backend:** Parallel debugging of both sides of the stack.
-- **TDD:** One agent writing tests, another implementing features.
-- **Documentation:** Generate docs side-by-side with code changes.
-- **Research:** One agent researching docs while others code.
+The script uses `tmux` to create a tiled grid of terminal panes. Each pane runs an independent agent process. They share your authentication but operate independently.
+
+```
+  ┌──────────────┬──────────────────────────────────────────────┐
+  │  Component   │  Purpose                                     │
+  ├──────────────┼──────────────────────────────────────────────┤
+  │  tmux        │  Terminal multiplexer. Creates the grid.     │
+  │  Agent CLI   │  Any supported AI coding assistant.          │
+  │  Cloud API   │  The AI backend. Runs in the cloud.          │
+  └──────────────┴──────────────────────────────────────────────┘
+```
 
 ---
 
-## FAQ
+```
+  ╦ ╦ ╔═╗ ╔═╗   ╔═╗ ╔═╗ ╔═╗ ╔═╗ ╔═╗
+  ║ ║ ╚═╗ ║╣    ║   ╠═╣ ╚═╗ ║╣  ╚═╗
+  ╚═╝ ╚═╝ ╚═╝   ╚═╝ ╩ ╩ ╚═╝ ╚═╝ ╚═╝
+```
+
+```
+  ┌─ Frontend / Backend ─── Parallel debugging both sides of the stack.
+  │
+  ├─ TDD ────────────────── One agent writes tests, another implements.
+  │
+  ├─ Documentation ──────── Generate docs side-by-side with code changes.
+  │
+  └─ Research ───────────── One agent reads docs while others code.
+```
+
+---
+
+```
+  ╔═╗ ╔═╗ ╔═╗
+  ╠╣  ╠═╣ ║═╬╗
+  ╩   ╩ ╩ ╚═╝╚
+```
 
 **Do I need to be online?**
-
-Yes. Claude Code calls the Anthropic API. The intelligence lives in the cloud.
+Yes. AI agents call their cloud APIs.
 
 **Can all agents work at once?**
-
-Yes. They're independent processes. Multiple conversations running simultaneously.
+Yes. They're independent processes running simultaneously.
 
 **Do I need multiple API keys?**
-
 No. One login, infinite agents (bounded by your hardware).
 
 **Can I use more than four?**
-
-Yes! That's the power of Infinity Mode. Type `claude8`, `claude16`, etc. Just keep in mind your screen real estate and CPU.
+Yes! That's Infinity Mode. Type `claude8`, `claude16`, etc.
 
 **Platform support?**
-
-Works on Mac, Linux, and Windows (via WSL). You need `tmux` installed.
+Works on Mac, Linux, and Windows (via WSL). Requires `tmux`.
 
 ---
 
-## Troubleshooting
+```
+  ╔╦╗ ╦═╗ ╔═╗ ╦ ╦ ╔╗  ╦  ╔═╗ ╔═╗ ╦ ╦ ╔═╗ ╔═╗ ╔╦╗
+   ║  ╠╦╝ ║ ║ ║ ║ ╠╩╗ ║  ║╣  ╚═╗ ╠═╣ ║ ║ ║ ║  ║
+   ╩  ╩╚═ ╚═╝ ╚═╝ ╚═╝ ╩═╝╚═╝ ╚═╝ ╩ ╩ ╚═╝ ╚═╝  ╩
+```
 
 **"tmux: command not found"**
 
-The installer should handle this, but you can install it manually:
+The installer handles this, but manually:
 ```bash
-# Mac (Homebrew)
-brew install tmux
-
-# Ubuntu/Debian
-sudo apt-get install tmux
+brew install tmux          # Mac
+sudo apt-get install tmux  # Ubuntu/Debian
 ```
 
 **"duplicate session: claude-swarm"**
 
-The session already exists:
 ```bash
-tmux attach -t claude-swarm
-# or
-tmux kill-session -t claude-swarm
+tmux attach -t claude-swarm        # reattach
+tmux kill-session -t claude-swarm  # or kill it
 ```
 
-**"claude: command not found"**
+**"claude: command not found" (or any agent)**
 
-1. Run Step 1 again to install the official CLI.
-2. The Claude Code Splitter installer automatically tries to manage your PATH, but if agents still aren't found, try running `export PATH="$PATH:$HOME/.local/bin"` or restarting your terminal.
-3. If you are using a mixed swarm (e.g., `qwen2`), ensure the `qwen` CLI is installed and available.
+1. Install the agent using the commands in the **Install Your Agents** section above.
+2. Run `source ~/.bashrc` (or `source ~/.zshrc`) to reload your shell.
+3. If agents still aren't found, try `export PATH="$PATH:$HOME/.local/bin"` or restart your terminal.
 
 **Security & Protection**
 
 Claude Code Splitter uses an internal whitelist to ensure only authorized AI CLI tools are executed. It also includes recursion protection to prevent accidental nested swarms from exhausting system resources.
 
-**Logging & Debugging**
-
-All activities are logged to `~/.claude-code-splitter.log`. If you encounter an issue, please include the contents of this log file when opening a [GitHub Issue](https://github.com/theaustinhatfield/claude-code-splitter/issues).
-
 ---
 
-## License
+```
+  ╦  ╦ ╔═╗ ╔═╗ ╔╗╔ ╔═╗ ╔═╗
+  ║  ║ ║   ║╣  ║║║ ╚═╗ ║╣
+  ╩═╝╩ ╚═╝ ╚═╝ ╝╚╝ ╚═╝ ╚═╝
+```
 
 MIT
 
 ---
 
-## About
-
-Created and maintained by [@theaustinhatfield](https://github.com/theaustinhatfield).
-
-This is a personal project. Bug reports welcome via [Issues](https://github.com/theaustinhatfield/claude-code-splitter/issues).
+```
+  ┌─────────────────────────────────────────────────────────────┐
+  │                                                             │
+  │   Created by @theaustinhatfield                             │
+  │   https://github.com/theaustinhatfield                     │
+  │                                                             │
+  │   Bug reports welcome via Issues.                           │
+  │   https://github.com/theaustinhatfield/                    │
+  │     claude-code-splitter/issues                             │
+  │                                                             │
+  └─────────────────────────────────────────────────────────────┘
+```
 
 

@@ -4,8 +4,8 @@
 #  CLAUDE CODE SPLITTER - ONE-CLICK INSTALLER
 #  https://github.com/theaustinhatfield/claude-code-splitter
 #  
-#  Installs: tmux, Claude CLI, OpenCode CLI
-#  Then launches your first swarm automatically!
+#  Installs: tmux
+#  Then configures the splitter for compatible AI CLIs
 # ============================================================
 
 clear
@@ -19,7 +19,7 @@ echo "  ║         One Command. Infinite Agents.                 ║"
 echo "  ║                                                       ║"
 echo "  ╚═══════════════════════════════════════════════════════╝"
 echo ""
-echo "  Installing all AI coding agents..."
+echo "  Installing Claude Code Splitter..."
 echo ""
 
 INTERACTIVE=0
@@ -43,7 +43,7 @@ export PATH="$HOME/.local/bin:$PATH"
 # ============================================================
 # STEP 1: TMUX
 # ============================================================
-echo "[1/7] tmux (terminal multiplexer)..."
+echo "[1/3] tmux (terminal multiplexer)..."
 if command -v tmux &>/dev/null; then
     echo "      ✓ Already installed"
 else
@@ -76,53 +76,25 @@ else
 fi
 
 # ============================================================
-# STEP 2: CLAUDE CLI (Anthropic)
+# STEP 2: Compatibility Check
 # ============================================================
-echo "[2/7] Claude Code (Anthropic)..."
-if command -v claude &>/dev/null || [ -f "$HOME/.local/bin/claude" ]; then
-    echo "      ✓ Already installed"
-else
-    curl -fsSL https://claude.ai/install.sh -o /tmp/claude-install.sh 2>/dev/null
-    bash /tmp/claude-install.sh &>/dev/null && echo "      ✓ Installed" || echo "      ⚠ Install manually: curl -fsSL https://claude.ai/install.sh | bash"
-    rm -f /tmp/claude-install.sh
-fi
-
-# ============================================================
-# STEP 3: OPENCODE CLI (Anomaly)
-# ============================================================
-echo "[3/7] OpenCode (Anomaly)..."
-if command -v opencode &>/dev/null || [ -f "$HOME/.local/bin/opencode" ]; then
-    echo "      ✓ Already installed"
-else
-    curl -fsSL https://opencode.ai/install -o /tmp/opencode-install.sh 2>/dev/null
-    if bash /tmp/opencode-install.sh &>/dev/null; then
-        echo "      ✓ Installed"
-    else
-        if command -v npm &>/dev/null; then
-            npm install -g opencode-ai &>/dev/null && echo "      ✓ Installed (npm)"
-        elif command -v pnpm &>/dev/null; then
-            pnpm install -g opencode-ai &>/dev/null && echo "      ✓ Installed (pnpm)"
-        elif command -v yarn &>/dev/null; then
-            yarn global add opencode-ai &>/dev/null && echo "      ✓ Installed (yarn)"
-        elif command -v bun &>/dev/null; then
-            bun install -g opencode-ai &>/dev/null && echo "      ✓ Installed (bun)"
-        else
-            echo "      ⚠ Install manually: curl -fsSL https://opencode.ai/install | bash"
-        fi
+echo "[2/3] Checking for compatible agents..."
+FOUND_AGENTS=()
+for tool in claude aider gh gemini codex opencode qwen; do
+    if command -v "$tool" &>/dev/null || [ -f "$HOME/.local/bin/$tool" ]; then
+        FOUND_AGENTS+=("$tool")
     fi
-    rm -f /tmp/opencode-install.sh
+done
+if [ ${#FOUND_AGENTS[@]} -gt 0 ]; then
+    echo "      ✓ Found: ${FOUND_AGENTS[*]}"
+else
+    echo "      ⚠ None found (install any supported CLI to use swarms)"
 fi
 
 # ============================================================
-# STEP 4-6: Optional Agents
+# STEP 3: SPLITTER LOGIC
 # ============================================================
-echo "[4/7] Skipping optional agents (Gemini, Aider, gh, Qwen, Codex)..."
-echo "      (Install them manually to use 'gemini4', 'aider2', etc.)"
-
-# ============================================================
-# STEP 6: SPLITTER LOGIC
-# ============================================================
-echo "[7/7] Configuring splitter..."
+echo "[3/3] Configuring splitter..."
 
 cat << 'SPLITTER_LOGIC' > "$LOGIC_FILE"
 #!/bin/bash
@@ -295,5 +267,6 @@ else
     echo "  claude4"
 fi
 
-echo "\nTip: If new commands like opencode4 are not found, run:"
+echo ""
+echo "Tip: If new commands like opencode4 are not found, run:"
 echo "  source ~/.bashrc"
