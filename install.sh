@@ -62,7 +62,11 @@ else
             sudo apt-get install -y tmux &>/dev/null
         fi
         if command -v tmux &>/dev/null; then
-            echo "      ✓ Installed"
+            if [ "$APT_DEFAULT_SOURCES" -eq 1 ]; then
+                echo "      ✓ Installed (default sources only)"
+            else
+                echo "      ✓ Installed"
+            fi
         else
             echo "      ⚠ Install failed. If apt has a bad repo (e.g., yarn), fix it and retry."
             echo "        Then run: sudo apt-get update && sudo apt-get install -y tmux"
