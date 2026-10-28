@@ -33,12 +33,29 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     OS="mac"
 fi
 
-PROFILE="$HOME/.bashrc"
-[ -n "$ZSH_VERSION" ] && PROFILE="$HOME/.zshrc"
-[ -f "$HOME/.zshrc" ] && [ -z "$BASH_VERSION" ] && PROFILE="$HOME/.zshrc"
+# Pick the config for the user's login shell. The installer itself runs under
+# bash even when the user's shell is zsh, so $ZSH_VERSION/$BASH_VERSION are
+# unreliable here. $SHELL is the login shell.
+SHELL_NAME=$(basename "${SHELL:-bash}")
+case "$SHELL_NAME" in
+    zsh)
+        PROFILE="${ZDOTDIR:-$HOME}/.zshrc"
+        ;;
+    bash)
+        if [ "$OS" = "mac" ]; then
+            # macOS Terminal starts bash as a login shell.
+            PROFILE="$HOME/.bash_profile"
+        else
+            PROFILE="$HOME/.bashrc"
+        fi
+        ;;
+    *)
+        PROFILE="$HOME/.profile"
+        ;;
+esac
 
 LOGIC_FILE="$HOME/.claude-code-splitter.sh"
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.opencode/bin:$HOME/.local/bin:$HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 # ============================================================
 # STEP 1: TMUX
@@ -81,7 +98,7 @@ fi
 echo "[2/3] Checking for compatible agents..."
 FOUND_AGENTS=()
 for tool in claude aider gh gemini codex opencode qwen; do
-    if command -v "$tool" &>/dev/null || [ -f "$HOME/.local/bin/$tool" ]; then
+    if command -v "$tool" &>/dev/null || [ -x "$HOME/.local/bin/$tool" ] || [ -x "$HOME/.opencode/bin/$tool" ]; then
         FOUND_AGENTS+=("$tool")
     fi
 done
@@ -100,54 +117,101 @@ cat << 'SPLITTER_LOGIC' > "$LOGIC_FILE"
 #!/bin/bash
 # Claude Code Splitter - Core Engine
 
-export PATH="$HOME/.local/bin:$HOME/bin:/usr/local/bin:$PATH"
+# Include the default install locations for all supported CLIs.
+export PATH="$HOME/.local/bin:$HOME/.opencode/bin:$HOME/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+# Parse "opencode4" -> CLAUDE_SPLIT_TOOL=opencode, CLAUDE_SPLIT_COUNT=4
+claude_split_parse_arg() {
+    local arg="$1"
+    local tool="${arg%%[0-9]*}"
+    local count="${arg#"$tool"}"
+
+    case "$tool" in
+        claude|qwen|gemini|codex|opencode|aider|gh) ;;
+        *) return 1 ;;
+    esac
+
+    case "$count" in
+        *[!0-9]*) return 1 ;;
+    esac
+
+    count="${count:-1}"
+    [ "$count" -ge 1 ] 2>/dev/null || return 1
+
+    CLAUDE_SPLIT_TOOL="$tool"
+    CLAUDE_SPLIT_COUNT="$count"
+    return 0
+}
 
 claude_split() {
     local session="claude-swarm"
-    local whitelist="claude|qwen|gemini|codex|opencode|aider|gh"
-    
-    # Validate tools
+    local launch_dir="$PWD"
     local missing=()
+    local arg tool count win i
+
+    if ! command -v tmux &>/dev/null; then
+        echo "tmux is required. Install it with: brew install tmux (macOS) or sudo apt-get install tmux (Linux)"
+        return 1
+    fi
+
+    if [ "$#" -eq 0 ]; then
+        echo "Usage: claude4 | opencode4 | claude2 aider2 ..."
+        return 1
+    fi
+
+    # Validate every argument before starting a session.
     for arg in "$@"; do
-        local tool="${arg%%[0-9]*}"
-        if ! echo "$tool" | grep -qE "^($whitelist)$"; then
-            echo "Blocked: '$tool' not authorized"; return 1
+        if ! claude_split_parse_arg "$arg"; then
+            echo "Invalid swarm argument: '$arg'"
+            echo "Usage: claude4 | opencode4 | claude2 aider2 ..."
+            return 1
         fi
-        if ! command -v "$tool" &>/dev/null && [ ! -x "$HOME/.local/bin/$tool" ]; then
+        tool="$CLAUDE_SPLIT_TOOL"
+        if ! command -v "$tool" &>/dev/null; then
             missing+=("$tool")
         fi
     done
-    
-    [ ${#missing[@]} -gt 0 ] && { echo "Missing: ${missing[*]}"; return 1; }
-    
+
+    if [ ${#missing[@]} -gt 0 ]; then
+        echo "Missing: ${missing[*]}"
+        return 1
+    fi
+
     # Recursion guard
-    [ -n "$TMUX" ] && [ "$(tmux display-message -p '#S' 2>/dev/null)" = "$session" ] && {
-        echo "Already in swarm"; return 1
-    }
-    
-    # Launch
+    if [ -n "$TMUX" ] && [ "$(tmux display-message -p '#S' 2>/dev/null)" = "$session" ]; then
+        echo "Already in swarm"
+        return 1
+    fi
+
+    # Launch in the directory the command was run from.
     tmux kill-session -t "$session" 2>/dev/null || true
-    tmux new-session -d -s "$session"
-    tmux set -t "$session" mouse on
-    tmux set -t "$session" allow-rename off
-    tmux set -t "$session" pane-border-status top
-    tmux set -t "$session" pane-border-format " #[fg=black,bg=white,bold] #T #[default] "
-    
+    tmux new-session -d -s "$session" -c "$launch_dir" || {
+        echo "Failed to start tmux session"
+        return 1
+    }
+
+    tmux set-option -t "$session" mouse on
+    win=$(tmux display-message -p -t "$session" '#{window_id}' 2>/dev/null)
+    if [ -n "$win" ]; then
+        tmux set-option -w -t "$win" allow-rename off
+        tmux set-option -w -t "$win" pane-border-status top
+        tmux set-option -w -t "$win" pane-border-format " #[fg=black,bg=white,bold] #T #[default] "
+    fi
+
     local first=1
     for arg in "$@"; do
-        local tool="${arg%%[0-9]*}"
-        local count="${arg##*[!0-9]}"; count="${count:-1}"
+        claude_split_parse_arg "$arg" || continue
+        tool="$CLAUDE_SPLIT_TOOL"
+        count="$CLAUDE_SPLIT_COUNT"
         for ((i=1; i<=count; i++)); do
             if [ "$first" -eq 1 ]; then
-                tmux send-keys -t "$session" "$tool" C-m
-                tmux select-pane -t "$session" -T "$tool"
                 first=0
             else
-                tmux split-window -t "$session"
-                tmux send-keys -t "$session" "$tool" C-m
-                tmux select-pane -T "$tool"
+                tmux split-window -t "$session" -c "$launch_dir"
                 tmux select-layout -t "$session" tiled
             fi
+            tmux send-keys -t "$session" "$tool" C-m
+            tmux select-pane -t "$session" -T "$tool"
         done
     done
     tmux attach -t "$session"
@@ -155,12 +219,16 @@ claude_split() {
 
 swarm_todo() {
     if [ -z "$TMUX" ]; then
-        echo "Not in a swarm session"; return 1
+        echo "Not in a swarm session"
+        return 1
     fi
     local current title tool
     current=$(tmux display-message -p '#T')
-    tool="${current%% | *}"
-    if [ -z "$*" ]; then
+    tool="${current%%|*}"
+    while [ "${tool% }" != "$tool" ]; do
+        tool="${tool% }"
+    done
+    if [ "$#" -eq 0 ]; then
         title="$tool"
     else
         title="$tool | $*"
@@ -168,25 +236,29 @@ swarm_todo() {
     tmux select-pane -T "$title"
 }
 
-# Hook for magic commands like "claude4"
+# Hook for magic commands like "claude4" and "opencode4".
 if [ -n "$BASH_VERSION" ]; then
     command_not_found_handle() {
-        if echo "$1" | grep -qE "^(claude|qwen|gemini|codex|opencode|aider|gh)[0-9]*$"; then
-            claude_split "$@"; return $?
+        if claude_split_parse_arg "$1"; then
+            claude_split "$@"
+            return $?
         fi
-        echo "bash: $1: command not found"; return 127
+        printf 'bash: %s: command not found\n' "$1" >&2
+        return 127
     }
 elif [ -n "$ZSH_VERSION" ]; then
     command_not_found_handler() {
-        if echo "$1" | grep -qE "^(claude|qwen|gemini|codex|opencode|aider|gh)[0-9]*$"; then
-            claude_split "$@"; return $?
+        if claude_split_parse_arg "$1"; then
+            claude_split "$@"
+            return $?
         fi
-        echo "zsh: command not found: $1"; return 127
+        printf 'zsh: command not found: %s\n' "$1" >&2
+        return 127
     }
 fi
 
-# Aliases
-for n in 1 2 3 4 5 6 7 8 9 10 12 16 20; do
+# Aliases for the common counts (larger counts use the not-found hook).
+for n in 1 2 3 4 5 6 7 8 9 10 12 16 20 32 50 100; do
     for t in claude aider qwen gh gemini codex opencode; do
         alias "${t}${n}=claude_split ${t}${n}"
     done
@@ -196,15 +268,25 @@ SPLITTER_LOGIC
 
 chmod 600 "$LOGIC_FILE"
 
-# Register with shell
-sed -i '/claude-code-splitter/d' "$PROFILE" 2>/dev/null || true
-echo "" >> "$PROFILE"
-echo "# Claude Code Splitter" >> "$PROFILE"
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$PROFILE"
-echo "source \"$LOGIC_FILE\"" >> "$PROFILE"
+# Register with shell. Use awk instead of sed -i so this works with both
+# GNU sed and BSD/macOS sed, and make repeated installs idempotent.
+register_profile() {
+    local profile="$1"
+    local tmp
+    [ -f "$profile" ] || : > "$profile"
+    tmp=$(mktemp "${TMPDIR:-/tmp}/claude-splitter.XXXXXX") || return 1
+    awk '!/Claude Code Splitter/ && !/claude-code-splitter/' "$profile" > "$tmp"
+    {
+        printf '\n# Claude Code Splitter\n'
+        printf 'source "%s"\n' "$LOGIC_FILE"
+    } >> "$tmp"
+    cat "$tmp" > "$profile"
+    rm -f "$tmp"
+}
+register_profile "$PROFILE"
+echo "      ✓ Added to $PROFILE"
 
 # Activate NOW
-export PATH="$HOME/.local/bin:$PATH"
 source "$LOGIC_FILE"
 
 # Count what's ready
@@ -247,26 +329,25 @@ echo ""
 # Auto-launch with first available agent
 if [ "$READY_COUNT" -gt 0 ]; then
     FIRST_TOOL=$(echo $READY_TOOLS | awk '{print $1}')
-    echo "Launching ${FIRST_TOOL}4 swarm in 3 seconds..."
-    echo "(Press Ctrl+C to cancel)"
-    sleep 3
     if [ "$INTERACTIVE" -eq 1 ] && command -v tmux &>/dev/null; then
+        echo "Launching ${FIRST_TOOL}4 swarm in 3 seconds..."
+        echo "(Press Ctrl+C to cancel)"
+        sleep 3
         claude_split "${FIRST_TOOL}4"
+    elif [ "$INTERACTIVE" -ne 1 ]; then
+        echo "Open a new terminal and run one of:"
+        echo "  claude4"
+        echo "  opencode4"
     else
-        if [ "$INTERACTIVE" -ne 1 ]; then
-            echo "Not running in a TTY. Open a terminal and run:"
-            echo "  claude4"
-        else
-            echo "tmux is not installed yet. Install tmux, then run:"
-            echo "  claude4"
-        fi
+        echo "tmux is not installed yet. Install tmux, then run:"
+        echo "  claude4"
     fi
 else
     echo "No agents installed yet. After installing one, run:"
-    echo "  source ~/.bashrc"
+    echo "  source \"$PROFILE\""
     echo "  claude4"
 fi
 
 echo ""
 echo "Tip: If new commands like opencode4 are not found, run:"
-echo "  source ~/.bashrc"
+echo "  source \"$PROFILE\""

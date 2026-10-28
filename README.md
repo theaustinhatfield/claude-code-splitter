@@ -154,7 +154,7 @@ tmux kill-session -t claude-swarm
 **agent: command not found**
 1. Install the agent from the table above.
 2. Run `source ~/.bashrc` (or `source ~/.zshrc`).
-3. Still missing? `export PATH="$PATH:$HOME/.local/bin"` or restart terminal.
+3. Still missing? `export PATH="$PATH:$HOME/.local/bin:$HOME/.opencode/bin"` or restart terminal.
 
 **Security** — Only whitelisted CLIs can run. Recursion guard prevents nested swarms.
 
